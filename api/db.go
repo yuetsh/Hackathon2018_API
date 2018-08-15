@@ -24,11 +24,13 @@ func Posts(limit int) (posts []Post, err error) {
 	return
 }
 
-func (post *Post) Create() (err error) {
+func (post *Post) Create() {
 	stmt, err := Db.Prepare("insert into posts (content, name) values ($1, $2) returning id")
 	if err != nil {
-		return
+		panic(err)
 	}
 	err = stmt.QueryRow(post.Content, post.Name).Scan(&post.Id)
-	return
+	if err != nil {
+		panic(err)
+	}
 }

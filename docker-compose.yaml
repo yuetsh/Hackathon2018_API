@@ -2,20 +2,22 @@ version: "3.7"
 
 services:
   postgres:
-    image: postgres
-#    restart: always
+    image: postgres:10.5-alpine
     volumes:
     - db-data:/var/lib/postgresql/data
     - ./db/schema:/db/schema
+
   server:
     build: .
-#    restart: always
     ports:
-      - 3000:3000
+    - 3000:3000
     volumes:
-      - .:/go/src/github.com/yuetsh/Hackathon2018
+    - .:/go/src/github.com/yuetsh/Hackathon2018
     depends_on:
     - postgres
+    environment:
+    - POSTGRES_USER=docker
+    - POSTGRES_PASSWORD=docker
 
 volumes:
   db-data:
