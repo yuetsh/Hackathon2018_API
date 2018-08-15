@@ -8,7 +8,7 @@ import (
 )
 
 func helloWorld(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "hello world")
+	fmt.Fprint(w, "hello world!")
 }
 
 func jsonExample(w http.ResponseWriter, r *http.Request)  {

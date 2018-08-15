@@ -5,8 +5,7 @@ import (
 	"encoding/csv"
 	"strconv"
 	"fmt"
-	
-	"../api"
+	"github.com/yuetsh/Hackathon2018/api"
 )
 
 func CreateCSV(data []api.Post, filename string) {

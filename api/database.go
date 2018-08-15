@@ -1,13 +1,13 @@
 package api
 
 import (
-	_ "github.com/lib/pq"
 	"database/sql"
+	_ "github.com/lib/pq"
 )
 
 var Db *sql.DB
 
-func Posts(limit int) (posts []Post, err error)  {
+func Posts(limit int) (posts []Post, err error) {
 	rows, err := Db.Query("select id, content, name from posts limit $1", limit)
 	if err != nil {
 		return

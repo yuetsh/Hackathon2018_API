@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"./api"
-	"./file"
 	"database/sql"
+	"github.com/yuetsh/Hackathon2018/api"
+	"github.com/yuetsh/Hackathon2018/file"
 )
 
 func init() {
