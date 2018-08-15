@@ -1,0 +1,7 @@
+.idea/
+vendor/
+dist/
+build/
+resources/
+assets/
+tmp/
