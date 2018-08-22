@@ -1,26 +1,21 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
-	"os"
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
-func init() {
-	var err error
-	connection := "user=" + os.Getenv("POSTGRES_USER") + "password=" + os.Getenv("POSTGRES_PASSWORD") + " sslmode=disable"
-	Db, err = sql.Open("postgres", connection)
-	if err != nil {
-		panic(err)
-	}
+var h Handler
+
+func serverMux(e *echo.Echo) {
+	e.GET("/ping", h.ping)
+	e.GET("/tpl/:id", h.getTpl)
 }
 
 func main() {
-	StartServer()
-
-	posts, err := Posts(10)
-	if err != nil {
-		return
-	}
-	fmt.Print(posts)
+	e := echo.New()
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+	serverMux(e)
+	e.Logger.Fatal(e.Start(":3010"))
 }

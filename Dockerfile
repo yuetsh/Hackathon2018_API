@@ -6,9 +6,16 @@ RUN echo "http://mirrors.aliyun.com/alpine/v3.4/main/" > /etc/apk/repositories
 
 RUN apk add --no-cache git
 
-RUN go get github.com/lib/pq
+RUN mkdir -p /go/src/golang.org/x/ \
+    && cd /go/src/golang.org/x/ \
+    && git clone https://github.com/golang/crypto.git crypto \
+    && go install crypto
 
-RUN go get github.com/pilu/fresh
+RUN go get -v github.com/labstack/echo
+
+RUN go get -v github.com/labstack/echo/middleware
+
+RUN go get -v github.com/pilu/fresh
 
 ARG project=/go/src/github.com/yuetsh/Hackathon2018_API
 
@@ -26,6 +33,6 @@ ENTRYPOINT ["fresh"]
 #
 #COPY --from=builder ${project}/release /
 #
-#EXPOSE 3000
+#EXPOSE 3010
 #
 #ENTRYPOINT ["/release"]

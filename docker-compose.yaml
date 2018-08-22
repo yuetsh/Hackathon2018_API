@@ -1,23 +1,23 @@
 version: "3.7"
 
 services:
-  postgres:
-    image: postgres:10.5-alpine
-    volumes:
-    - db-data:/var/lib/postgresql/data
-    - ./db/schema:/db/schema
+#  postgres:
+#    image: postgres:10.5-alpine
+#    volumes:
+#    - db-data:/var/lib/postgresql/data
+#    - ./db/schema:/db/schema
 
   server:
     build: .
     ports:
-    - 3010:3000
+    - 3010:3010
     volumes:
     - .:/go/src/github.com/yuetsh/Hackathon2018_API
-    depends_on:
-    - postgres
-    environment:
-    - POSTGRES_USER=docker
-    - POSTGRES_PASSWORD=docker
+#    depends_on:
+#    - postgres
+#    environment:
+#    - POSTGRES_USER=docker
+#    - POSTGRES_PASSWORD=docker
 
-volumes:
-  db-data:
+#volumes:
+#  db-data:
