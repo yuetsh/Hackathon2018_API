@@ -1,12 +1,13 @@
 package main
 
 import (
-	"os/exec"
-	"os"
-	"io/ioutil"
-	"html/template"
 	"errors"
+	"html/template"
+	"io/ioutil"
+	"os"
+	"os/exec"
 	"strings"
+	"sync"
 )
 
 type Meme struct {
@@ -109,7 +110,8 @@ func (m *Meme) renderAss() error {
 	}
 }
 
-func (m *Meme) renderGif() error {
+func (m *Meme) renderGif(wg *sync.WaitGroup) error {
+	defer wg.Done()
 	cmd := exec.Command("ffmpeg",
 		"-i", m.paths.template.mp4,
 		"-vf", "ass="+m.paths.output.ass+",scale=300:-2",
@@ -122,7 +124,8 @@ func (m *Meme) renderGif() error {
 	return nil
 }
 
-func (m *Meme) renderMp4() error {
+func (m *Meme) renderMp4(wg *sync.WaitGroup) error {
+	defer wg.Done()
 	cmd := exec.Command("ffmpeg",
 		"-i", m.paths.template.mp4,
 		"-vf", "ass="+m.paths.output.ass,
@@ -145,8 +148,11 @@ func (m *Meme) New() error {
 	case ErrFound:
 		return nil
 	case nil:
-		m.renderGif()
-		m.renderMp4()
+		var wg sync.WaitGroup
+		wg.Add(2)
+		go m.renderGif(&wg)
+		go m.renderMp4(&wg)
+		wg.Wait()
 		return nil
 	default:
 		return err
