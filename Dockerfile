@@ -1,10 +1,9 @@
-FROM golang:alpine AS builder
+FROM golang:1.10.3-stretch AS builder
 
-RUN cp /etc/apk/repositories /etc/apk/repositories.bak
+COPY ./sources.list /etc/apt/sources.list
 
-RUN echo "http://mirrors.aliyun.com/alpine/v3.4/main/" > /etc/apk/repositories
-
-RUN apk add --no-cache git
+RUN apt-get update \
+    && apt-get install -y locales locales-all ttf-wqy-microhei ffmpeg
 
 RUN mkdir -p /go/src/golang.org/x/ \
     && cd /go/src/golang.org/x/ \
@@ -23,13 +22,16 @@ WORKDIR ${project}
 
 ADD . .
 
-ENTRYPOINT ["fresh"]
+ENTRYPOINT ["go", "test"]
 
-#RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o release src/main.go
+#RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o release main.go
 #
 #FROM scratch
 #
-#ARG project=/go/src/github.com/yuetsh/Hackathon2018
+#RUN apt-get update \
+#    && apt-get install -y locales locales-all ttf-wqy-microhei
+#
+#ARG project=/go/src/github.com/yuetsh/Hackathon2018_API
 #
 #COPY --from=builder ${project}/release /
 #

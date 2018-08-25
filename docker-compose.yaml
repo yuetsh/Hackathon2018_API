@@ -7,17 +7,12 @@ services:
 #    - db-data:/var/lib/postgresql/data
 #    - ./db/schema:/db/schema
 
+#  ffmpeg:
+#    image: jrottenberg/ffmpeg:3.4-alpine
+
   server:
     build: .
     ports:
     - 3010:3010
     volumes:
     - .:/go/src/github.com/yuetsh/Hackathon2018_API
-#    depends_on:
-#    - postgres
-#    environment:
-#    - POSTGRES_USER=docker
-#    - POSTGRES_PASSWORD=docker
-
-#volumes:
-#  db-data:

@@ -9,7 +9,10 @@ var h Handler
 
 func serverMux(e *echo.Echo) {
 	e.GET("/ping", h.ping)
-	e.GET("/tpl/:id", h.getTpl)
+}
+
+func init() {
+
 }
 
 func main() {
