@@ -5,9 +5,10 @@ import (
 	"os"
 	"io/ioutil"
 	"html/template"
-	"crypto/md5"
 	"strings"
 	"encoding/hex"
+	"crypto/md5"
+	"fmt"
 )
 
 //常用参数说明：
@@ -94,14 +95,18 @@ import (
 //	return hash, nil
 //}
 
+func newMd5(subs []string) string {
+	cipher := md5.New()
+	text := []byte(strings.Join(subs, ","))
+	cipher.Write(text)
+	return hex.EncodeToString(cipher.Sum(nil))
+}
+
 func newAss(name string, subs []string) (hash string, err error) {
 	origin := "./templates/" + name + "/template.ass"
 	outPath := "./dist/" + name
 
-	cipher := md5.New()
-	text := []byte(strings.Join(subs, ","))
-	cipher.Write(text)
-	hash = hex.EncodeToString(cipher.Sum(nil))
+	hash = newMd5(subs)
 
 	if _, err = os.Stat(outPath); os.IsNotExist(err) {
 		os.Mkdir(outPath, os.ModePerm)
@@ -125,6 +130,7 @@ func newAss(name string, subs []string) (hash string, err error) {
 				data := map[string][]string{
 					"sentences": subs,
 				}
+				fmt.Println(data)
 				if err = newSub.Execute(file, data); err != nil {
 					return hash, err
 				}
@@ -175,7 +181,6 @@ func New2(name string, subs []string) (hash string, err error) {
 		return
 	} else {
 		NewGif(name, hash)
-		NewMp4(name, hash)
 	}
 	return
 }
