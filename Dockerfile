@@ -22,7 +22,7 @@ WORKDIR ${project}
 
 ADD . .
 
-ENTRYPOINT ["go", "test"]
+ENTRYPOINT ["fresh"]
 
 #RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o release main.go
 #

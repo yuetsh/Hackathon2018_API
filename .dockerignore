@@ -1,7 +1,6 @@
 .idea/
 vendor/
-#dist/
+dist/
 build/
-#templates/
-assets/
+templates/
 tmp/

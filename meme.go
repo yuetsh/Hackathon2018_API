@@ -9,8 +9,8 @@ import (
 )
 
 type Meme struct {
-	name  string
-	subs  []string
+	Name  string   `json:"name" validate:"required"`
+	Subs  []string `json:"subs" validate:"required"`
 	hash  string
 	paths Paths
 }
@@ -54,10 +54,10 @@ var (
 )
 
 func (m *Meme) check() error {
-	if val, ok := NameLenMap[m.name]; !ok {
+	if val, ok := NameLenMap[m.Name]; !ok {
 		return ErrName
 	} else {
-		if len(m.subs) != val {
+		if len(m.Subs) != val {
 			return ErrSubsLen
 		}
 		return nil
@@ -65,13 +65,13 @@ func (m *Meme) check() error {
 }
 
 func (m *Meme) initPaths() {
-	m.hash = NewMd5(m.subs)
-	m.paths.template.mp4 = "./templates/" + m.name + "/template.mp4"
-	m.paths.template.ass = "./templates/" + m.name + "/template.ass"
-	m.paths.output.name = "./dist/" + m.name
-	m.paths.output.ass = "./dist/" + m.name + "/" + m.hash + ".ass"
-	m.paths.output.gif = "./dist/" + m.name + "/" + m.hash + ".gif"
-	m.paths.output.mp4 = "./dist/" + m.name + "/" + m.hash + ".mp4"
+	m.hash = NewMd5(m.Subs)
+	m.paths.template.mp4 = "./templates/" + m.Name + "/template.mp4"
+	m.paths.template.ass = "./templates/" + m.Name + "/template.ass"
+	m.paths.output.name = "./dist/" + m.Name
+	m.paths.output.ass = "./dist/" + m.Name + "/" + m.hash + ".ass"
+	m.paths.output.gif = "./dist/" + m.Name + "/" + m.hash + ".gif"
+	m.paths.output.mp4 = "./dist/" + m.Name + "/" + m.hash + ".mp4"
 }
 
 func (m *Meme) renderAss() error {
@@ -93,7 +93,7 @@ func (m *Meme) renderAss() error {
 				return err
 			} else {
 				data := map[string][]string{
-					"sentences": m.subs,
+					"sentences": m.Subs,
 				}
 				if err = newSub.Execute(file, data); err != nil {
 					return err
