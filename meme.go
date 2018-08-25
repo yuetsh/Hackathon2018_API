@@ -6,13 +6,15 @@ import (
 	"io/ioutil"
 	"html/template"
 	"errors"
+	"strings"
 )
 
 type Meme struct {
-	Name  string   `json:"name" validate:"required"`
-	Subs  []string `json:"subs" validate:"required"`
-	hash  string
-	paths Paths
+	Name   string   `json:"name"`
+	Format string   `json:"format"`
+	Subs   []string `json:"subs"`
+	hash   string
+	paths  Paths
 }
 
 type Paths struct {
@@ -54,6 +56,7 @@ var (
 )
 
 func (m *Meme) check() error {
+	m.Name = strings.ToLower(m.Name)
 	if val, ok := NameLenMap[m.Name]; !ok {
 		return ErrName
 	} else {
