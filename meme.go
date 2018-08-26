@@ -42,7 +42,6 @@ const (
 )
 
 var (
-	ErrFound   = errors.New("found")
 	ErrSubsLen = errors.New("subs length is wrong")
 	ErrName    = errors.New("name is wrong")
 	NameLenMap = map[string]int{
@@ -68,7 +67,7 @@ func (m *Meme) check() error {
 	}
 }
 
-func (m *Meme) initPaths() {
+func (m *Meme) isExist() bool {
 	m.hash = NewMd5(m.Subs)
 	m.paths.template.mp4 = "./templates/" + m.Name + "/template.mp4"
 	m.paths.template.ass = "./templates/" + m.Name + "/template.ass"
@@ -76,37 +75,37 @@ func (m *Meme) initPaths() {
 	m.paths.output.ass = "./dist/" + m.Name + "/" + m.hash + ".ass"
 	m.paths.output.gif = "./dist/" + m.Name + "/" + m.hash + ".gif"
 	m.paths.output.mp4 = "./dist/" + m.Name + "/" + m.hash + ".mp4"
-}
-
-func (m *Meme) renderAss() error {
 	if _, err := os.Stat(m.paths.output.name); os.IsNotExist(err) {
 		os.Mkdir(m.paths.output.name, os.ModePerm)
 	}
-
 	if _, err := os.Stat(m.paths.output.ass); os.IsNotExist(err) {
-		text := ""
-		if buf, err := ioutil.ReadFile(m.paths.template.ass); err != nil {
-			return err
-		} else {
-			text = string(buf)
-		}
-		if newSub, err := template.New("ASS File").Parse(text); err != nil {
-			return err
-		} else {
-			if file, err := os.Create(m.paths.output.ass); err != nil {
-				return err
-			} else {
-				data := map[string][]string{
-					"sentences": m.Subs,
-				}
-				if err = newSub.Execute(file, data); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
+		return false
 	} else {
-		return ErrFound
+		return true
+	}
+}
+
+func (m *Meme) renderAss() error {
+	text := ""
+	if buf, err := ioutil.ReadFile(m.paths.template.ass); err != nil {
+		return err
+	} else {
+		text = string(buf)
+	}
+	if newSub, err := template.New("ASS File").Parse(text); err != nil {
+		return err
+	} else {
+		if file, err := os.Create(m.paths.output.ass); err != nil {
+			return err
+		} else {
+			data := map[string][]string{
+				"sentences": m.Subs,
+			}
+			if err = newSub.Execute(file, data); err != nil {
+				return err
+			}
+		}
+		return nil
 	}
 }
 
@@ -119,7 +118,7 @@ func (m *Meme) renderGif(wg *sync.WaitGroup) error {
 		"-y", m.paths.output.gif)
 
 	if _, err := cmd.CombinedOutput(); err != nil {
-		return err
+		panic(err)
 	}
 	return nil
 }
@@ -133,7 +132,7 @@ func (m *Meme) renderMp4(wg *sync.WaitGroup) error {
 		"-y", m.paths.output.mp4)
 
 	if _, err := cmd.CombinedOutput(); err != nil {
-		return err
+		panic(err)
 	}
 	return nil
 }
@@ -142,19 +141,17 @@ func (m *Meme) New() error {
 	if err := m.check(); err != nil {
 		return err
 	}
-	m.initPaths()
-	err := m.renderAss()
-	switch err {
-	case ErrFound:
+	if m.isExist() {
 		return nil
-	case nil:
+	} else {
+		if err := m.renderAss(); err != nil {
+			return err
+		}
 		var wg sync.WaitGroup
 		wg.Add(2)
 		go m.renderGif(&wg)
 		go m.renderMp4(&wg)
 		wg.Wait()
 		return nil
-	default:
-		return err
 	}
 }

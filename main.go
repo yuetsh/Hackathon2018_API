@@ -1,9 +1,9 @@
 package main
 
 import (
-	"os"
-	"net/http"
 	"log"
+	"net/http"
+	"os"
 )
 
 var h Handler

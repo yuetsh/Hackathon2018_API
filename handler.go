@@ -1,10 +1,10 @@
 package main
 
 import (
-	"net/http"
-	"fmt"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"net/http"
 )
 
 type Handler struct{}

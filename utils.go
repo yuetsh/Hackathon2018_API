@@ -2,8 +2,8 @@ package main
 
 import (
 	"crypto/md5"
-	"strings"
 	"encoding/hex"
+	"strings"
 )
 
 func NewMd5(subs []string) string {

@@ -1,31 +1,22 @@
-FROM golang:1.10.3-stretch AS builder
+FROM golang:1.10.3-stretch AS build
 
-COPY ./sources.list /etc/apt/sources.list
-
-RUN apt-get update \
-    && apt-get install -y locales locales-all ttf-wqy-microhei ffmpeg
-
-RUN go get -u github.com/pilu/fresh
-
-ARG project=/go/src/github.com/yuetsh/Hackathon2018_API
-
-WORKDIR ${project}
+WORKDIR /go/src/github.com/yuetsh/Hackathon2018_API
 
 ADD . .
 
-ENTRYPOINT ["fresh"]
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o zhenxiang .
 
-#RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o release main.go
-#
-#FROM scratch
-#
-#RUN apt-get update \
-#    && apt-get install -y locales locales-all ttf-wqy-microhei
-#
-#ARG project=/go/src/github.com/yuetsh/Hackathon2018_API
-#
-#COPY --from=builder ${project}/release /
-#
-#EXPOSE 3010
-#
-#ENTRYPOINT ["/release"]
+FROM jrottenberg/ffmpeg:3.3
+
+#COPY ./sources.list /etc/apt/sources.list
+
+RUN apt-get update \
+    && apt-get install -y ttf-wqy-microhei
+
+COPY --from=build /go/src/github.com/yuetsh/Hackathon2018_API/zhenxiang /
+
+ADD ./templates /
+
+EXPOSE 3010
+
+ENTRYPOINT ["/zhenxiang"]
