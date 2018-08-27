@@ -1,22 +1,21 @@
-FROM golang:1.10.3-stretch AS build
+FROM golang:1.10.3-stretch AS builder
 
 WORKDIR /go/src/github.com/yuetsh/Hackathon2018_API
 
 ADD . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o zhenxiang .
+RUN CGO_ENABLED=0 GOOS=linux go install -ldflags "-s -w" .
 
 FROM jrottenberg/ffmpeg:3.3
 
-#COPY ./sources.list /etc/apt/sources.list
+WORKDIR /opt/api
 
-RUN apt-get update \
-    && apt-get install -y ttf-wqy-microhei
+RUN apt-get install -y ttf-wqy-microhei
 
-COPY --from=build /go/src/github.com/yuetsh/Hackathon2018_API/zhenxiang /
+COPY --from=builder /go/bin/Hackathon2018_API .
 
-ADD ./templates /
+COPY --from=builder /go/src/github.com/yuetsh/Hackathon2018_API/templates .
 
 EXPOSE 3010
 
-ENTRYPOINT ["/zhenxiang"]
+ENTRYPOINT ["./Hackathon2018_API"]

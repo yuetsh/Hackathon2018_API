@@ -32,7 +32,7 @@ type Paths struct {
 }
 
 const (
-	ZhenXiang = "wangjingze"
+	ZhenXiang = "zhenxiang"
 	Sorry     = "sorry"
 	DaGong    = "dagong"
 	JinKeLa   = "jinkela"
@@ -93,16 +93,16 @@ func (m *Meme) renderAss() error {
 		text = string(buf)
 	}
 	if newSub, err := template.New("ASS File").Parse(text); err != nil {
-		return err
+		panic(err)
 	} else {
 		if file, err := os.Create(m.paths.output.ass); err != nil {
-			return err
+			panic(err)
 		} else {
 			data := map[string][]string{
 				"sentences": m.Subs,
 			}
 			if err = newSub.Execute(file, data); err != nil {
-				return err
+				panic(err)
 			}
 		}
 		return nil

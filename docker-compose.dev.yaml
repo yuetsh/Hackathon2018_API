@@ -12,5 +12,4 @@ services:
     ports:
     - 3010:3010
     volumes:
-    - ./dist:/opt/api/dist
-    - ./templates:/opt/api/templates
+    - .:/go/src/github.com/yuetsh/Hackathon2018_API
