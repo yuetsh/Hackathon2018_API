@@ -15,7 +15,13 @@ func init() {
 }
 
 func main() {
-	http.HandleFunc("/ping", h.ping)
-	http.HandleFunc("/meme", h.createMeme)
-	log.Fatal(http.ListenAndServe(":3010", nil))
+	addr := ":3010"
+	logger := log.New(os.Stdout, "", log.LstdFlags)
+
+	mux := http.NewServeMux()
+
+	mux.Handle("/ping", Adapt(h.ping, Logging(logger), Using(http.MethodGet)))
+	mux.Handle("/meme", Adapt(h.createMeme, Logging(logger), Using(http.MethodPost)))
+
+	log.Fatal(http.ListenAndServe(addr, mux))
 }
