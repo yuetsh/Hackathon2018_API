@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 )
@@ -30,22 +32,43 @@ func Adapt(handler interface{}, adapters ...Adapter) (h http.Handler) {
 }
 
 func Logging(l *log.Logger) Adapter {
-	return func(handler http.Handler, response *interface{}) http.Handler {
+	return func(h http.Handler, response *interface{}) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			l.Println("http:", r.Method, r.URL.Path, r.UserAgent())
-			handler.ServeHTTP(w, r)
+			h.ServeHTTP(w, r)
 		})
 	}
 }
 
-func Using(name string) Adapter {
-	return func(handler http.Handler, response *interface{}) http.Handler {
+func UseMethod(name string) Adapter {
+	return func(h http.Handler, response *interface{}) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if r.Method != name {
 				http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 			} else {
-				handler.ServeHTTP(w, r)
+				h.ServeHTTP(w, r)
 			}
+		})
+	}
+}
+
+func API(debug bool) Adapter {
+	return func(h http.Handler, response *interface{}) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+			w.Header().Set("Content-Type", "application/json")
+			payload := make(map[string]interface{})
+			if e, ok := (*response).(error); ok {
+				if debug {
+					fmt.Println("handler returned error", e.Error())
+				}
+				payload["error"] = e.Error()
+			} else if s, ok := (*response).(fmt.Stringer); ok {
+				payload["data"] = s.String()
+			} else {
+				payload["data"] = response
+			}
+			json.NewEncoder(w).Encode(payload)
 		})
 	}
 }

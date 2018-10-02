@@ -14,8 +14,8 @@ func (h *Handler) ping(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome to the secret garden.")
 }
 
-func (h *Handler) listMemes(w http.ResponseWriter, r *http.Request) {
-
+func (h *Handler) listMemes(r *http.Request) interface{} {
+	return "hello"
 }
 
 func (h *Handler) createMeme(w http.ResponseWriter, r *http.Request) {
