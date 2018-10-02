@@ -67,11 +67,8 @@ func (m *Meme) isExist() bool {
 	if _, err := os.Stat(m.paths.output.name); os.IsNotExist(err) {
 		os.Mkdir(m.paths.output.name, os.ModePerm)
 	}
-	if _, err := os.Stat(m.paths.output.ass); os.IsNotExist(err) {
-		return false
-	} else {
-		return true
-	}
+	_, err := os.Stat(m.paths.output.ass)
+	return !os.IsNotExist(err)
 }
 
 func (m *Meme) renderAss(ch chan bool) error {
