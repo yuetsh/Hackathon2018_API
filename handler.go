@@ -9,13 +9,19 @@ import (
 
 type Handler struct{}
 
-func (h *Handler) ping(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "Welcome to the secret garden.")
-}
-
 func (h *Handler) listMemes(r *http.Request) interface{} {
-	return "hello"
+	files, err := ioutil.ReadDir("./templates")
+	if err != nil {
+		return nil
+	}
+	var memes []string
+	for _, f := range files {
+		if f.Name() == ".DS_Store" {
+			continue
+		}
+		memes = append(memes, f.Name())
+	}
+	return memes
 }
 
 func (h *Handler) createMeme(w http.ResponseWriter, r *http.Request) {

@@ -20,7 +20,6 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.Handle("/ping", Adapt(h.ping, Logging(logger), UseMethod(http.MethodGet)))
 	mux.Handle("/meme", Adapt(h.createMeme, Logging(logger), UseMethod(http.MethodPost)))
 	mux.Handle("/memes", Adapt(h.listMemes, Logging(logger), UseMethod(http.MethodGet), API(true)))
 

@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-	"sync"
 )
 
 type Meme struct {
@@ -31,27 +30,17 @@ type Paths struct {
 	}
 }
 
-const (
-	ZhenXiang = "zhenxiang"
-	Sorry     = "sorry"
-	DaGong    = "dagong"
-	JinKeLa   = "jinkela"
-	Touche    = "diandongche"
-	KongMing  = "kongming"
-	Marmot    = "marmot"
-)
-
 var (
 	ErrSubsLen = errors.New("subs length is wrong")
 	ErrName    = errors.New("name is wrong")
 	NameLenMap = map[string]int{
-		ZhenXiang: 4,
-		DaGong:    6,
-		Sorry:     9,
-		JinKeLa:   6,
-		Touche:    6,
-		KongMing:  2,
-		Marmot:    2,
+		"zhenxiang":   4,
+		"dagong":      6,
+		"sorry":       9,
+		"jinkela":     6,
+		"diandongche": 6,
+		"kongming":    2,
+		"marmot":      2,
 	}
 )
 
@@ -85,7 +74,7 @@ func (m *Meme) isExist() bool {
 	}
 }
 
-func (m *Meme) renderAss() error {
+func (m *Meme) renderAss(ch chan bool) error {
 	text := ""
 	if buf, err := ioutil.ReadFile(m.paths.template.ass); err != nil {
 		return err
@@ -105,12 +94,12 @@ func (m *Meme) renderAss() error {
 				panic(err)
 			}
 		}
+		ch <- true
 		return nil
 	}
 }
 
-func (m *Meme) renderGif(wg *sync.WaitGroup) error {
-	defer wg.Done()
+func (m *Meme) renderGif(ch chan string) error {
 	cmd := exec.Command("ffmpeg",
 		"-i", m.paths.template.mp4,
 		"-vf", "ass="+m.paths.output.ass+",scale=300:-2",
@@ -120,11 +109,11 @@ func (m *Meme) renderGif(wg *sync.WaitGroup) error {
 	if _, err := cmd.CombinedOutput(); err != nil {
 		panic(err)
 	}
+	ch <- "gif"
 	return nil
 }
 
-func (m *Meme) renderMp4(wg *sync.WaitGroup) error {
-	defer wg.Done()
+func (m *Meme) renderMp4(ch chan string) error {
 	cmd := exec.Command("ffmpeg",
 		"-i", m.paths.template.mp4,
 		"-vf", "ass="+m.paths.output.ass,
@@ -134,6 +123,7 @@ func (m *Meme) renderMp4(wg *sync.WaitGroup) error {
 	if _, err := cmd.CombinedOutput(); err != nil {
 		panic(err)
 	}
+	ch <- "mp4"
 	return nil
 }
 
@@ -144,14 +134,12 @@ func (m *Meme) New() error {
 	if m.isExist() {
 		return nil
 	} else {
-		if err := m.renderAss(); err != nil {
-			return err
-		}
-		var wg sync.WaitGroup
-		wg.Add(2)
-		go m.renderGif(&wg)
-		go m.renderMp4(&wg)
-		wg.Wait()
+		ch1, ch2 := make(chan bool), make(chan string, 2)
+		go m.renderAss(ch1)
+		<-ch1
+		go m.renderGif(ch2)
+		go m.renderMp4(ch2)
+		<-ch2
 		return nil
 	}
 }
