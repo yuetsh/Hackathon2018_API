@@ -5,13 +5,13 @@ services:
 #    image: postgres:10.5-alpine
 #    volumes:
 #    - db-data:/var/lib/postgresql/data
-#    - ./db/schema:/db/schema
+#    - ../db/schema:/db/schema
 
   server:
     build:
-      context: .
-      dockerfile: ./Dockerfile.dev
+      context: ..
+      dockerfile: ../Dockerfile
     ports:
     - 3010:3010
     volumes:
-    - .:/go/src/github.com/yuetsh/Hackathon2018_API
+    - ..:/go/src/github.com/yuetsh/Hackathon2018_API

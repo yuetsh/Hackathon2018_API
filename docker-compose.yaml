@@ -7,10 +7,25 @@ services:
 #    - db-data:/var/lib/postgresql/data
 #    - ./db/schema:/db/schema
 
-  server:
-    build: .
+  api:
+    build:
+      context:  .
+      dockerfile: Dockerfile
     ports:
-    - 3010:3010
+      - 3010:3010
     volumes:
-    - ./dist:/opt/api/dist
-    - ./templates:/opt/api/templates
+      - ./dist:/opt/api/dist
+      - ./templates:/opt/api/templates
+
+  proxy:
+    build:
+      context:  ./nginx
+      dockerfile: Dockerfile
+    volumes:
+      - /etc/opt/ssl/certs/api.yueyue.work.pem:/etc/opt/ssl/certs/certs/api.yueyue.work.pem
+      - /etc/opt/ssl/private/api.yueyue.work.key:/etc/opt/ssl/certs/private/api.yueyue.work.key
+    ports:
+      - "443:443"
+    links:
+      - api
+    
