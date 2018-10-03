@@ -21,11 +21,12 @@ services:
     build:
       context:  ./nginx
       dockerfile: Dockerfile
-    volumes:
-      - /etc/opt/ssl/certs/api.yueyue.work.pem:/etc/opt/ssl/certs/certs/api.yueyue.work.pem
-      - /etc/opt/ssl/private/api.yueyue.work.key:/etc/opt/ssl/certs/private/api.yueyue.work.key
     ports:
-      - "443:443"
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - /etc/opt/ssl/certs/api.yueyue.work.pem:/etc/nginx/certs/api.yueyue.work.pem
+      - /etc/opt/ssl/private/api.yueyue.work.key:/etc/nginx/certs/api.yueyue.work.key
     links:
       - api
     
