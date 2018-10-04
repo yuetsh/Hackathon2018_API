@@ -20,8 +20,7 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.Handle("/meme", Adapt(
-		h.createMeme, UseMethod(http.MethodPost), Logging(logger), API(true)))
+	mux.Handle("/meme", Adapt(h.createMeme, UseMethod(http.MethodPost), Logging(logger), API(true)))
 	mux.Handle("/memes", Adapt(h.listMemes, UseMethod(http.MethodGet), Logging(logger), API(true)))
 
 	log.Fatal(http.ListenAndServe(addr, mux))
