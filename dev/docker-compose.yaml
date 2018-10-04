@@ -10,8 +10,8 @@ services:
   server:
     build:
       context: ..
-      dockerfile: ../Dockerfile
+      dockerfile: dev/Dockerfile
     ports:
-    - 3010:3010
+      - 3010:3010
     volumes:
-    - ..:/go/src/github.com/yuetsh/Hackathon2018_API
+      - ..:/go/src/github.com/yuetsh/Hackathon2018_API

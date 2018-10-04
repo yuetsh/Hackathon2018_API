@@ -71,7 +71,7 @@ func (m *Meme) isExist() bool {
 	return !os.IsNotExist(err)
 }
 
-func (m *Meme) renderAss(ch chan bool) error {
+func (m *Meme) renderAss() error {
 	text := ""
 	if buf, err := ioutil.ReadFile(m.paths.template.ass); err != nil {
 		return err
@@ -91,7 +91,6 @@ func (m *Meme) renderAss(ch chan bool) error {
 				panic(err)
 			}
 		}
-		ch <- true
 		return nil
 	}
 }
@@ -131,12 +130,11 @@ func (m *Meme) New() error {
 	if m.isExist() {
 		return nil
 	} else {
-		ch1, ch2 := make(chan bool), make(chan string, 2)
-		go m.renderAss(ch1)
-		<-ch1
-		go m.renderGif(ch2)
-		go m.renderMp4(ch2)
-		<-ch2
+		c := make(chan string, 2)
+		m.renderAss()
+		go m.renderGif(c)
+		go m.renderMp4(c)
+		<-c
 		return nil
 	}
 }

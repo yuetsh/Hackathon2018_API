@@ -7,7 +7,7 @@ import (
 
 func TestNew(t *testing.T) {
 	m := Meme{
-		Name: ZhenXiang,
+		Name: "zhenxiang",
 		Subs: []string{
 			"上下",
 			"左右",
