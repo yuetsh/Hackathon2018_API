@@ -3,7 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/pkg/errors"
+	"errors"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
@@ -13,18 +13,18 @@ import (
 )
 
 type UploadData struct {
-	Id     string
-	Link   string
-	Name   string
-	Width  int
-	Height int
-	Type   string
+	Id     string `json:"id"`
+	Link   string `json:"link"`
+	Name   string `json:"name"`
+	Width  int    `json:"width"`
+	Height int    `json:"height"`
+	Type   string `json:"type"`
 }
 
 type UploadRes struct {
-	Data    UploadData
-	Success bool
-	Status  int
+	Data    UploadData `json:"data"`
+	Success bool       `json:"success"`
+	Status  int        `json:"status"`
 }
 
 func UploadGif(path string) (*UploadData, error) {
@@ -36,7 +36,7 @@ func UploadGif(path string) (*UploadData, error) {
 	filename := reg.FindString(path)
 	file, err := os.Open(path)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	defer file.Close()
 
@@ -44,7 +44,7 @@ func UploadGif(path string) (*UploadData, error) {
 	writer := multipart.NewWriter(body)
 	part, err := writer.CreateFormFile("image", filename)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	_, err = io.Copy(part, file)
 
@@ -56,21 +56,24 @@ func UploadGif(path string) (*UploadData, error) {
 
 	err = writer.Close()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	req, err := http.NewRequest(http.MethodPost, url, body)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	req.Header.Set("Authorization", "Bearer "+accessToken)
 
-	res, _ := http.DefaultClient.Do(req)
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
 	defer res.Body.Close()
 	data, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	uploadRes := new(UploadRes)
 	json.Unmarshal(data, uploadRes)

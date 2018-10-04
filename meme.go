@@ -11,7 +11,6 @@ import (
 
 type Meme struct {
 	Name   string   `json:"name"`
-	Format string   `json:"format"`
 	Subs   []string `json:"subs"`
 	hash   string
 	paths  Paths
