@@ -8,23 +8,26 @@ import (
 
 type Handler struct{}
 
-type asset struct {
-	name  string
-	cover string
-	gif   string
+type Asset struct {
+	Name   string `json:"name"`
+	NameEN string `json:"name_en"`
+	Cover  string `json:"cover"`
+	Gif    string `json:"gif"`
 }
 
 func (h *Handler) listMemes(r *http.Request) interface{} {
-	return [2]asset{
+	return [2]Asset{
 		{
-			name:  "真香",
-			cover: "https://i.imgur.com/JpD5jcp.png",
-			gif:   "https://i.imgur.com/TFPQMJm.gif",
+			Name:   "真香",
+			NameEN: "Zhen Xiang",
+			Cover:  "https://i.imgur.com/JpD5jcp.png",
+			Gif:    "https://i.imgur.com/TFPQMJm.gif",
 		},
 		{
-			name:  "为所欲为",
-			cover: "https://i.imgur.com/wwaBHEM.png",
-			gif:   "https://i.imgur.com/vTTHmY7.gif",
+			Name:   "为所欲为",
+			NameEN: "Rich",
+			Cover:  "https://i.imgur.com/wwaBHEM.png",
+			Gif:    "https://i.imgur.com/vTTHmY7.gif",
 		},
 	}
 }
