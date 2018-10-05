@@ -13,7 +13,7 @@ type Asset struct {
 	NameEN       string   `json:"name_en"`
 	Cover        string   `json:"cover"`
 	Gif          string   `json:"gif"`
-	Placeholders []string `json:"Placeholders"`
+	Placeholders []string `json:"placeholders"`
 }
 
 func (h *Handler) listMemes(r *http.Request) interface{} {
