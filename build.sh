@@ -2,4 +2,4 @@
 
 docker-compose down
 docker images -q | xargs docker rmi
-docker-compose up --build
+docker-compose up -d --build
