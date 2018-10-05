@@ -3,25 +3,30 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 )
 
 type Handler struct{}
 
+type asset struct {
+	name  string
+	cover string
+	gif   string
+}
+
 func (h *Handler) listMemes(r *http.Request) interface{} {
-	files, err := ioutil.ReadDir("./templates")
-	if err != nil {
-		return err
+	return [2]asset{
+		{
+			name:  "真香",
+			cover: "https://i.imgur.com/JpD5jcp.png",
+			gif:   "https://i.imgur.com/TFPQMJm.gif",
+		},
+		{
+			name:  "为所欲为",
+			cover: "https://i.imgur.com/wwaBHEM.png",
+			gif:   "https://i.imgur.com/vTTHmY7.gif",
+		},
 	}
-	var memes []string
-	for _, f := range files {
-		if f.Name() == ".DS_Store" {
-			continue
-		}
-		memes = append(memes, f.Name())
-	}
-	return memes
 }
 
 func (h *Handler) createMeme(r *http.Request) interface{} {
