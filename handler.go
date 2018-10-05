@@ -13,7 +13,6 @@ type Asset struct {
 	NameEN       string   `json:"name_en"`
 	Cover        string   `json:"cover"`
 	Gif          string   `json:"gif"`
-	SubLen       int      `json:"subs_length"`
 	Placeholders []string `json:"Placeholders"`
 }
 
@@ -24,7 +23,6 @@ func (h *Handler) listMemes(r *http.Request) interface{} {
 			NameEN: "Zhen Xiang",
 			Cover:  "https://i.imgur.com/JpD5jcp.png",
 			Gif:    "https://i.imgur.com/vTTHmY7.gif",
-			SubLen: 4,
 			Placeholders: []string{
 				"我王境泽就是饿死",
 				"死外面 从这里跳下去",
@@ -37,7 +35,6 @@ func (h *Handler) listMemes(r *http.Request) interface{} {
 			NameEN: "Rich Men Can Do Anything He Wants",
 			Cover:  "https://i.imgur.com/wwaBHEM.png",
 			Gif:    "https://i.imgur.com/7eRIgA5.gif",
-			SubLen: 9,
 			Placeholders: []string{
 				"好啊",
 				"别说我是一等良民",
