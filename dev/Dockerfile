@@ -1,4 +1,4 @@
-FROM golang:1.10.3-stretch
+FROM golang:1.11.1-stretch
 
 COPY ./sources.list /etc/apt/sources.list
 

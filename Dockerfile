@@ -1,4 +1,4 @@
-FROM golang:1.10.3-stretch AS builder
+FROM golang:1.11.1-stretch AS builder
 
 WORKDIR /go/src/github.com/yuetsh/Hackathon2018_API
 
@@ -6,7 +6,7 @@ ADD . .
 
 RUN CGO_ENABLED=0 GOOS=linux go install -ldflags "-s -w" .
 
-FROM jrottenberg/ffmpeg:3.3
+FROM jrottenberg/ffmpeg:4.0-ubuntu
 
 WORKDIR /opt/api
 
