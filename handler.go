@@ -18,7 +18,7 @@ type Asset struct {
 func (h *Handler) listMemes(r *http.Request) interface{} {
 	return [2]Asset{
 		{
-			Name:   "真香",
+			Name:   "zhenxiang",
 			Cover:  "https://i.imgur.com/JpD5jcp.png",
 			Gif:    "https://i.imgur.com/vTTHmY7.gif",
 			Placeholders: []string{
@@ -29,7 +29,7 @@ func (h *Handler) listMemes(r *http.Request) interface{} {
 			},
 		},
 		{
-			Name:   "有钱可以为所欲为",
+			Name:   "sorry",
 			Cover:  "https://i.imgur.com/wwaBHEM.png",
 			Gif:    "https://i.imgur.com/7eRIgA5.gif",
 			Placeholders: []string{
