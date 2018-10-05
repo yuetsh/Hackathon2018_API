@@ -21,7 +21,7 @@ func (h *Handler) listMemes(r *http.Request) interface{} {
 			Name:   "真香",
 			NameEN: "Zhen Xiang",
 			Cover:  "https://i.imgur.com/JpD5jcp.png",
-			Gif:    "https://i.imgur.com/TFPQMJm.gif",
+			Gif:    "https://i.imgur.com/vTTHmY7.gif",
 		},
 		{
 			Name:   "为所欲为",
