@@ -2,7 +2,6 @@ version: "3.7"
 
 services:
   db:
-    container_name: db
     image: postgres:10.5-alpine
     environment:
       - POSTGRES_DB=hackathon_prod
@@ -16,7 +15,6 @@ services:
     restart: unless-stopped
 
   api:
-    container_name: api
     build: .
     ports:
     - 3010:3010
@@ -30,7 +28,6 @@ services:
     - db
 
   proxy:
-    container_name: proxy
     build:
       context:  ./nginx
     ports:
