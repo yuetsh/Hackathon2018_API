@@ -21,9 +21,16 @@ func init() {
 
 	db, err := sql.Open("postgres", conn)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("DB connected!")
 }
 
 func main() {
