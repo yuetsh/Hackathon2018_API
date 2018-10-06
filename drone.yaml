@@ -1,7 +1,0 @@
-workspace:
-  base: /go
-  path: src/github.com/yuetsh/Hackathon2018_API
-
-pipeline:
-  build:
-    image: .
