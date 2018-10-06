@@ -10,10 +10,10 @@ import (
 )
 
 type Meme struct {
-	Name   string   `json:"name"`
-	Subs   []string `json:"subs"`
-	hash   string
-	paths  Paths
+	Name  string   `json:"name"`
+	Subs  []string `json:"subs"`
+	hash  string
+	paths Paths
 }
 
 type Paths struct {
@@ -25,12 +25,12 @@ type Paths struct {
 		name string
 		ass  string
 		gif  string
-		mp4  string
 	}
 }
 
 var (
 	ErrSubsLen = errors.New("subs length is wrong")
+	ErrNilSubs = errors.New("subs has nil value")
 	ErrName    = errors.New("name is wrong")
 	NameLenMap = map[string]int{
 		"zhenxiang":   4,
@@ -51,6 +51,16 @@ func (m *Meme) check() error {
 		if len(m.Subs) != val {
 			return ErrSubsLen
 		}
+		hasNil := false
+		for _, v := range m.Subs {
+			if v == "" {
+				hasNil = true
+				continue
+			}
+		}
+		if hasNil {
+			return ErrNilSubs
+		}
 		return nil
 	}
 }
@@ -62,7 +72,6 @@ func (m *Meme) isExist() bool {
 	m.paths.output.name = "./dist/" + m.Name
 	m.paths.output.ass = "./dist/" + m.Name + "/" + m.hash + ".ass"
 	m.paths.output.gif = "./dist/" + m.Name + "/" + m.hash + ".gif"
-	m.paths.output.mp4 = "./dist/" + m.Name + "/" + m.hash + ".mp4"
 	if _, err := os.Stat(m.paths.output.name); os.IsNotExist(err) {
 		os.Mkdir(m.paths.output.name, os.ModePerm)
 	}
@@ -94,7 +103,7 @@ func (m *Meme) renderAss() error {
 	}
 }
 
-func (m *Meme) renderGif(ch chan string) error {
+func (m *Meme) renderGif() error {
 	cmd := exec.Command("ffmpeg",
 		"-i", m.paths.template.mp4,
 		"-vf", "ass="+m.paths.output.ass+",scale=300:-2",
@@ -104,21 +113,6 @@ func (m *Meme) renderGif(ch chan string) error {
 	if _, err := cmd.CombinedOutput(); err != nil {
 		panic(err)
 	}
-	ch <- "gif"
-	return nil
-}
-
-func (m *Meme) renderMp4(ch chan string) error {
-	cmd := exec.Command("ffmpeg",
-		"-i", m.paths.template.mp4,
-		"-vf", "ass="+m.paths.output.ass,
-		"-an",
-		"-y", m.paths.output.mp4)
-
-	if _, err := cmd.CombinedOutput(); err != nil {
-		panic(err)
-	}
-	ch <- "mp4"
 	return nil
 }
 
@@ -129,11 +123,8 @@ func (m *Meme) New() error {
 	if m.isExist() {
 		return nil
 	} else {
-		c := make(chan string, 2)
 		m.renderAss()
-		go m.renderGif(c)
-		go m.renderMp4(c)
-		<-c
+		m.renderGif()
 		return nil
 	}
 }

@@ -1,29 +1,46 @@
 version: "3.7"
 
 services:
-#  postgres:
-#    image: postgres:10.5-alpine
-#    volumes:
-#    - db-data:/var/lib/postgresql/data
-#    - ./db/schema:/db/schema
+  db:
+    container_name: db
+    image: postgres:10.5-alpine
+    environment:
+      - POSTGRES_DB=hackathon_prod
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=docker
+    volumes:
+    - db-data:/var/lib/postgresql/data
+    - ./db/schema:/db/schema
+    ports:
+    - "5432:5432"
+    restart: unless-stopped
 
   api:
+    container_name: api
     build: .
     ports:
-      - 3010:3010
+    - 3010:3010
+    command: ["./wait-for-it.sh", "db:5432", "--", "./Hackathon2018_API"]
     volumes:
-      - ./dist:/opt/api/dist
-      - ./templates:/opt/api/templates
+    - ./dist:/opt/api/dist
+    - ./templates:/opt/api/templates
+    links:
+    - db
+    depends_on:
+    - db
 
   proxy:
+    container_name: proxy
     build:
       context:  ./nginx
     ports:
-      - 443:443
+    - 443:443
     volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - /etc/opt/ssl/certs/api.yueyue.work.pem:/etc/nginx/certs/api.yueyue.work.pem
-      - /etc/opt/ssl/private/api.yueyue.work.key:/etc/nginx/certs/api.yueyue.work.key
+    - /var/run/docker.sock:/tmp/docker.sock:ro
+    - /etc/opt/ssl/certs/api.yueyue.work.pem:/etc/nginx/certs/api.yueyue.work.pem
+    - /etc/opt/ssl/private/api.yueyue.work.key:/etc/nginx/certs/api.yueyue.work.key
     links:
-      - api
-    
+    - api
+
+volumes:
+  db-data:

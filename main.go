@@ -1,6 +1,9 @@
 package main
 
 import (
+	"database/sql"
+	"fmt"
+	_ "github.com/lib/pq"
 	"log"
 	"net/http"
 	"os"
@@ -12,6 +15,15 @@ func init() {
 	if _, err := os.Stat("./dist"); os.IsNotExist(err) {
 		os.Mkdir("./dist", 0700)
 	}
+
+	conn := fmt.Sprintf("host=db user=%s password=%s dbname=%s sslmode=disable",
+		os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASSWORD"))
+
+	db, err := sql.Open("postgres", conn)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
 }
 
 func main() {

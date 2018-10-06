@@ -1,17 +1,33 @@
 version: "3.7"
 
 services:
-#  postgres:
-#    image: postgres:10.5-alpine
-#    volumes:
-#    - db-data:/var/lib/postgresql/data
-#    - ../db/schema:/db/schema
+  db:
+    container_name: db
+    image: postgres:10.5-alpine
+    environment:
+     - POSTGRES_DB=hackathon_dev
+     - POSTGRES_USER=docker
+     - POSTGRES_PASSWORD=docker
+    ports:
+    - "5432:5432"
+    volumes:
+    - db-data:/var/lib/postgresql/data
+    - ../db/schema:/db/schema
 
-  server:
+  api:
+    container_name: api
     build:
       context: ..
       dockerfile: dev/Dockerfile
     ports:
-      - 3010:3010
+    - 3010:3010
     volumes:
-      - ..:/go/src/github.com/yuetsh/Hackathon2018_API
+    - ..:/go/src/github.com/yuetsh/Hackathon2018_API
+    links:
+    - db
+    depends_on:
+    - db
+    command: ["./wait-for-it.sh", "db:5432", "--", "fresh"]
+
+volumes:
+  db-data:
