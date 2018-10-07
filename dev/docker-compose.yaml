@@ -3,10 +3,6 @@ version: "3.7"
 services:
   db:
     image: postgres:10.5-alpine
-    environment:
-     - POSTGRES_DB=hackathon_dev
-     - POSTGRES_USER=docker
-     - POSTGRES_PASSWORD=docker
     ports:
     - "5432:5432"
     volumes:
@@ -17,6 +13,11 @@ services:
     build:
       context: ..
       dockerfile: dev/Dockerfile
+    environment:
+    - POSTGRES_DB=${POSTGRES_DB_DEV}
+    - POSTGRES_USER=${POSTGRES_USER}
+    - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    - ENV=dev
     ports:
     - 3010:3010
     volumes:

@@ -3,10 +3,6 @@ version: "3.7"
 services:
   db:
     image: postgres:10.5-alpine
-    environment:
-    - POSTGRES_DB=hackathon_prod
-    - POSTGRES_USER=docker
-    - POSTGRES_PASSWORD=docker
     volumes:
     - db-data:/var/lib/postgresql/data
     - ./db/schema:/db/schema
@@ -16,6 +12,11 @@ services:
 
   api:
     build: .
+    environment:
+    - POSTGRES_DB=${POSTGRES_DB}
+    - POSTGRES_USER=${POSTGRES_USER}
+    - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    - ENV=prod
     ports:
     - 3010:3010
     volumes:
@@ -39,7 +40,6 @@ services:
     - api
     depends_on:
     - api
-    restart: unless-stopped
 
 volumes:
   db-data:

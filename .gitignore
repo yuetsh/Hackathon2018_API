@@ -6,3 +6,4 @@ build/
 templates/
 assets/
 tmp/
+.env
