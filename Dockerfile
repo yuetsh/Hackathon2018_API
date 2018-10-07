@@ -20,4 +20,4 @@ COPY --from=builder /go/src/github.com/yuetsh/Hackathon2018_API/templates .
 
 EXPOSE 3010
 
-ENTRYPOINT: ["./wait-for-it.sh", "db:5432", "--", "./Hackathon2018_API"]
+ENTRYPOINT ["./wait-for-it.sh", "db:5432", "--", "./Hackathon2018_API"]
