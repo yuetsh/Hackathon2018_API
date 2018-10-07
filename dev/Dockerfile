@@ -12,3 +12,5 @@ RUN go get -u github.com/pilu/fresh
 WORKDIR /go/src/github.com/yuetsh/Hackathon2018_API
 
 ADD . .
+
+ENTRYPOINT ["./wait-for-it.sh", "db:5432", "--", "fresh"]
