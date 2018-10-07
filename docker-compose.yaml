@@ -4,9 +4,9 @@ services:
   db:
     image: postgres:10.5-alpine
     environment:
-      - POSTGRES_DB=hackathon_prod
-      - POSTGRES_USER=docker
-      - POSTGRES_PASSWORD=docker
+    - POSTGRES_DB=hackathon_prod
+    - POSTGRES_USER=docker
+    - POSTGRES_PASSWORD=docker
     volumes:
     - db-data:/var/lib/postgresql/data
     - ./db/schema:/db/schema
@@ -37,6 +37,9 @@ services:
     - /etc/opt/ssl/private/api.yueyue.work.key:/etc/nginx/certs/api.yueyue.work.key
     links:
     - api
+    depends_on:
+    - api
+    restart: unless-stopped
 
 volumes:
   db-data:
