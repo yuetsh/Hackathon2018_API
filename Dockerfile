@@ -18,6 +18,8 @@ COPY --from=builder /go/bin/Hackathon2018_API .
 
 COPY --from=builder /go/src/github.com/yuetsh/Hackathon2018_API/templates .
 
+COPY --from=builder /go/src/github.com/yuetsh/Hackathon2018_API/wait-for-it.sh .
+
 EXPOSE 3010
 
 ENTRYPOINT ["./wait-for-it.sh", "db:5432", "--", "./Hackathon2018_API"]
