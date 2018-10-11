@@ -2,7 +2,9 @@ FROM golang:1.11.1-stretch AS builder
 
 WORKDIR /go/src/github.com/yuetsh/Hackathon2018_API
 
-RUN go get -u github.com/lib/pq
+ENV GO111MODULE=on
+
+RUN go mod vendor
 
 ADD . .
 
