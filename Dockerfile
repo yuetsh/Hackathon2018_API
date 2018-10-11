@@ -4,10 +4,6 @@ WORKDIR /go/src/github.com/yuetsh/Hackathon2018_API
 
 RUN go get github.com/lib/pq
 
-RUN go mod tidy
-
-RUN go mod vendor
-
 ADD . .
 
 RUN CGO_ENABLED=0 GOOS=linux go install -ldflags "-s -w" .
