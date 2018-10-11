@@ -18,8 +18,8 @@ func (h *Handler) listMemes(r *http.Request) interface{} {
 	return [2]Asset{
 		{
 			Name:  "zhenxiang",
-			Cover: "https://i.imgur.com/JpD5jcp.png",
-			Gif:   "https://i.imgur.com/vTTHmY7.gif",
+			Cover: "https://i.loli.net/2018/10/11/5bbeba99d8ce4.png",
+			Gif:   "https://i.loli.net/2018/10/11/5bbeba9a6fae7.gif",
 			Placeholders: []string{
 				"我王境泽就是饿死",
 				"死外面 从这里跳下去",
@@ -29,8 +29,8 @@ func (h *Handler) listMemes(r *http.Request) interface{} {
 		},
 		{
 			Name:  "sorry",
-			Cover: "https://i.imgur.com/wwaBHEM.png",
-			Gif:   "https://i.imgur.com/7eRIgA5.gif",
+			Cover: "https://i.loli.net/2018/10/11/5bbeba99cf285.png",
+			Gif:   "https://i.loli.net/2018/10/11/5bbeba9ab1b99.gif",
 			Placeholders: []string{
 				"好啊",
 				"别说我是一等良民",
