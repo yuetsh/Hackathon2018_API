@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -18,9 +17,9 @@ type Asset struct {
 func (h *Handler) listMemes(r *http.Request) interface{} {
 	return [2]Asset{
 		{
-			Name:   "zhenxiang",
-			Cover:  "https://i.imgur.com/JpD5jcp.png",
-			Gif:    "https://i.imgur.com/vTTHmY7.gif",
+			Name:  "zhenxiang",
+			Cover: "https://i.imgur.com/JpD5jcp.png",
+			Gif:   "https://i.imgur.com/vTTHmY7.gif",
 			Placeholders: []string{
 				"我王境泽就是饿死",
 				"死外面 从这里跳下去",
@@ -29,9 +28,9 @@ func (h *Handler) listMemes(r *http.Request) interface{} {
 			},
 		},
 		{
-			Name:   "sorry",
-			Cover:  "https://i.imgur.com/wwaBHEM.png",
-			Gif:    "https://i.imgur.com/7eRIgA5.gif",
+			Name:  "sorry",
+			Cover: "https://i.imgur.com/wwaBHEM.png",
+			Gif:   "https://i.imgur.com/7eRIgA5.gif",
 			Placeholders: []string{
 				"好啊",
 				"别说我是一等良民",
@@ -44,7 +43,24 @@ func (h *Handler) listMemes(r *http.Request) interface{} {
 				"不会 不会",
 			},
 		},
+		//{
+		//	Name:  "dagong",
+		//	Cover: "",
+		//	Gif:   "",
+		//	Placeholders: []string{
+		//
+		//	}
+		//}
 	}
+}
+
+type UploadData struct {
+	Id     string `json:"id"`
+	Link   string `json:"link"`
+	Name   string `json:"name"`
+	Width  int    `json:"width"`
+	Height int    `json:"height"`
+	Type   string `json:"type"`
 }
 
 func (h *Handler) createMeme(r *http.Request) interface{} {
@@ -59,6 +75,12 @@ func (h *Handler) createMeme(r *http.Request) interface{} {
 	if err != nil {
 		return err
 	}
-	fmt.Println(data)
-	return data
+	res := new(UploadData)
+	res.Height = data.Height
+	res.Width = data.Width
+	res.Id = data.Storename
+	res.Link = data.Url
+	res.Name = data.Filename
+	res.Type = "image/gif"
+	return res
 }

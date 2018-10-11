@@ -10,6 +10,6 @@ func TestUpload(t *testing.T) {
 	if err != nil {
 		fmt.Println(err)
 	} else {
-		fmt.Println(b.Link)
+		fmt.Println(b.Url)
 	}
 }
