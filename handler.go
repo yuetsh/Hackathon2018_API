@@ -15,7 +15,7 @@ type Asset struct {
 }
 
 func (h *Handler) listMemes(r *http.Request) interface{} {
-	return [2]Asset{
+	return [3]Asset{
 		{
 			Name:  "zhenxiang",
 			Cover: "https://i.loli.net/2018/10/11/5bbeba99d8ce4.png",
@@ -43,14 +43,19 @@ func (h *Handler) listMemes(r *http.Request) interface{} {
 				"不会 不会",
 			},
 		},
-		//{
-		//	Name:  "dagong",
-		//	Cover: "",
-		//	Gif:   "",
-		//	Placeholders: []string{
-		//
-		//	}
-		//}
+		{
+			Name:  "dagong",
+			Cover: "https://i.loli.net/2018/10/11/5bbf10ca7100c.png",
+			Gif:   "https://i.loli.net/2018/10/11/5bbf10937b454.gif",
+			Placeholders: []string{
+				"没有钱啊肯定要做啊",
+				"不做的话没有钱用",
+				"那你不会打工啊",
+				"有手有脚的",
+				"打工是不可能打工的",
+				"这辈子不可能打工的",
+			},
+		},
 	}
 }
 
