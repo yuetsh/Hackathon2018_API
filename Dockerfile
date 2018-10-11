@@ -4,7 +4,11 @@ WORKDIR /go/src/github.com/yuetsh/Hackathon2018_API
 
 ENV GO111MODULE=on
 
+RUN go mod download
+
 RUN go mod vendor
+
+RUN go mod verify
 
 ADD . .
 
