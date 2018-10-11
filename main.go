@@ -14,6 +14,7 @@ func init() {
 		os.Mkdir("./dist", 0700)
 	}
 	InitDB()
+	NewPalettes()
 }
 
 func main() {

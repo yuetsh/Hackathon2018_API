@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -18,8 +20,9 @@ type Meme struct {
 
 type Paths struct {
 	template struct {
-		mp4 string
-		ass string
+		mp4     string
+		ass     string
+		palette string
 	}
 	output struct {
 		name string
@@ -69,6 +72,7 @@ func (m *Meme) isExist() bool {
 	m.hash = NewMd5(m.Subs)
 	m.paths.template.mp4 = "./templates/" + m.Name + "/template.mp4"
 	m.paths.template.ass = "./templates/" + m.Name + "/template.ass"
+	m.paths.template.palette = "./templates/" + m.Name + "/palette.png"
 	m.paths.output.name = "./dist/" + m.Name
 	m.paths.output.ass = "./dist/" + m.Name + "/" + m.hash + ".ass"
 	m.paths.output.gif = "./dist/" + m.Name + "/" + m.hash + ".gif"
@@ -104,11 +108,13 @@ func (m *Meme) renderAss() error {
 }
 
 func (m *Meme) renderGif() error {
-	cmd := exec.Command("ffmpeg",
+	cmd := exec.Command(
+		"ffmpeg",
 		"-i", m.paths.template.mp4,
-		"-vf", "ass="+m.paths.output.ass+",scale=300:-2",
-		"-r", "8",
-		"-y", m.paths.output.gif)
+		"-i", m.paths.template.palette,
+		"-lavfi", "ass="+m.paths.output.ass+",fps=16,scale=300:-1:flags=lanczos [x]; [x][1:v] paletteuse",
+		"-y", m.paths.output.gif,
+	)
 
 	if _, err := cmd.CombinedOutput(); err != nil {
 		panic(err)
@@ -126,5 +132,27 @@ func (m *Meme) New() error {
 		m.renderAss()
 		m.renderGif()
 		return nil
+	}
+}
+
+func NewPalettes() {
+	reg := regexp.MustCompile(`templates/(.*)/template.mp4`)
+	err := filepath.Walk("./templates", func(path string, info os.FileInfo, err error) error {
+		if reg.MatchString(path) {
+			dirname := reg.ReplaceAllString(path, "$1")
+			cmd := exec.Command(
+				"ffmpeg",
+				"-i", "./"+path,
+				"-vf", "fps=16,scale=300:-1:flags=lanczos,palettegen",
+				"-y", "./templates/"+dirname+"/palette.png",
+			)
+			if _, err := cmd.CombinedOutput(); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		panic(err)
 	}
 }
