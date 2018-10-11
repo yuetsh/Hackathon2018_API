@@ -7,3 +7,4 @@ templates/
 assets/
 tmp/
 .env
+go.sum
