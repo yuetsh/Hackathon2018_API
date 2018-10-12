@@ -34,8 +34,8 @@ services:
     - 443:443
     volumes:
     - /var/run/docker.sock:/tmp/docker.sock:ro
-    - /etc/opt/ssl/certs/api.yueyue.work.pem:/etc/nginx/certs/api.yueyue.work.pem
-    - /etc/opt/ssl/private/api.yueyue.work.key:/etc/nginx/certs/api.yueyue.work.key
+    - ${PEM}:/etc/nginx/certs/api.yueyue.work.pem
+    - ${PRIVATE_KEY}:/etc/nginx/certs/api.yueyue.work.key
     links:
     - api
     depends_on:
