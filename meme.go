@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"sync"
 )
 
 type Meme struct {
@@ -109,7 +110,8 @@ func (m *Meme) renderAss() error {
 	}
 }
 
-func (m *Meme) renderMp4(c chan bool) error {
+func (m *Meme) renderMp4(wg *sync.WaitGroup) error {
+	defer wg.Done()
 	cmd := exec.Command("ffmpeg",
 		"-i", m.paths.template.mp4,
 		"-vf", "ass="+m.paths.output.ass,
@@ -119,11 +121,11 @@ func (m *Meme) renderMp4(c chan bool) error {
 	if _, err := cmd.CombinedOutput(); err != nil {
 		panic(err)
 	}
-	c <- true
 	return nil
 }
 
-func (m *Meme) renderGif(c chan bool) error {
+func (m *Meme) renderGif(wg *sync.WaitGroup) error {
+	defer wg.Done()
 	cmd := exec.Command(
 		"ffmpeg",
 		"-i", m.paths.template.mp4,
@@ -135,7 +137,6 @@ func (m *Meme) renderGif(c chan bool) error {
 	if _, err := cmd.CombinedOutput(); err != nil {
 		panic(err)
 	}
-	c <- true
 	return nil
 }
 
@@ -146,11 +147,12 @@ func (m *Meme) New() error {
 	if m.isExist() {
 		return nil
 	} else {
-		c := make(chan bool, 2)
+		var wg sync.WaitGroup
+		wg.Add(2)
 		m.renderAss()
-		m.renderMp4(c)
-		m.renderGif(c)
-		<-c
+		go m.renderMp4(&wg)
+		go m.renderGif(&wg)
+		wg.Wait()
 		return nil
 	}
 }

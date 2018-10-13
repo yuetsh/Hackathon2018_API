@@ -12,16 +12,16 @@ import (
 	"regexp"
 )
 
-//type UploadData struct {
-//	Id     string `json:"id"`
-//	Link   string `json:"link"`
-//	Name   string `json:"name"`
-//	Width  int    `json:"width"`
-//	Height int    `json:"height"`
-//	Type   string `json:"type"`
-//}
-//
-//type UploadRes struct {
+type UploadData struct {
+	Id     string `json:"id"`
+	Link   string `json:"link"`
+	Name   string `json:"name"`
+	Width  int    `json:"width"`
+	Height int    `json:"height"`
+	Type   string `json:"type"`
+}
+
+//type UploadRes1 struct {
 //	Data    UploadData `json:"data"`
 //	Success bool       `json:"success"`
 //	Status  int        `json:"status"`
@@ -45,7 +45,7 @@ type UploadData2 struct {
 	Path      string `json:"path"`
 }
 
-func UploadGif(path string) (*UploadData2, error) {
+func UploadGif(path string) (*UploadData, error) {
 	url := "https://sm.ms/api/upload"
 	//url := "https://api.imgur.com/3/image"
 	//accessToken := "02c650a94bbbd7dc6011ffb4fe759d4c03323197"
@@ -72,6 +72,7 @@ func UploadGif(path string) (*UploadData2, error) {
 	//writer.WriteField("type", "gif")
 	//writer.WriteField("title", "hackathon2018")
 	//writer.WriteField("description", "zhenxiang app - hackathon 2018 for xianghuanji")
+
 	err = writer.Close()
 	if err != nil {
 		return nil, err
@@ -96,8 +97,15 @@ func UploadGif(path string) (*UploadData2, error) {
 	uploadRes := new(UploadRes2)
 	json.Unmarshal(data, uploadRes)
 	if uploadRes.Code == "success" {
-		return &uploadRes.Data, nil
+		res := new(UploadData)
+		res.Height = uploadRes.Data.Height
+		res.Width = uploadRes.Data.Width
+		res.Id = uploadRes.Data.Storename
+		res.Link = uploadRes.Data.Url
+		res.Name = uploadRes.Data.Filename
+		res.Type = "image/gif"
+		return res, nil
 	} else {
-		return nil, errors.New(string(uploadRes.Msg))
+		return nil, errors.New(uploadRes.Msg)
 	}
 }

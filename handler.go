@@ -59,15 +59,6 @@ func (h *Handler) listMemes(r *http.Request) interface{} {
 	}
 }
 
-type UploadData struct {
-	Id     string `json:"id"`
-	Link   string `json:"link"`
-	Name   string `json:"name"`
-	Width  int    `json:"width"`
-	Height int    `json:"height"`
-	Type   string `json:"type"`
-}
-
 func (h *Handler) createMeme(r *http.Request) interface{} {
 	m := new(Meme)
 	if err := json.NewDecoder(r.Body).Decode(m); err != nil {
@@ -80,12 +71,5 @@ func (h *Handler) createMeme(r *http.Request) interface{} {
 	if err != nil {
 		return err
 	}
-	res := new(UploadData)
-	res.Height = data.Height
-	res.Width = data.Width
-	res.Id = data.Storename
-	res.Link = data.Url
-	res.Name = data.Filename
-	res.Type = "image/gif"
-	return res
+	return data
 }
