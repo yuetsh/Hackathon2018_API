@@ -128,7 +128,7 @@ func (m *Meme) renderGif(c chan bool) error {
 		"ffmpeg",
 		"-i", m.paths.template.mp4,
 		"-i", m.paths.template.palette,
-		"-lavfi", "ass="+m.paths.output.ass+",fps=16,scale=300:-1:flags=lanczos [x]; [x][1:v] paletteuse",
+		"-lavfi", "ass="+m.paths.output.ass+",fps=10,scale=300:-1:flags=lanczos[x];[x][1:v]paletteuse",
 		"-y", m.paths.output.gif,
 	)
 
@@ -163,7 +163,7 @@ func NewPalettes() {
 			cmd := exec.Command(
 				"ffmpeg",
 				"-i", "./"+path,
-				"-vf", "fps=16,scale=300:-1:flags=lanczos,palettegen",
+				"-vf", "fps=10,scale=300:-1:flags=lanczos,palettegen",
 				"-y", "./templates/"+dirname+"/palette.png",
 			)
 			if _, err := cmd.CombinedOutput(); err != nil {
