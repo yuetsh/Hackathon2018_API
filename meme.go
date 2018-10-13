@@ -28,6 +28,7 @@ type Paths struct {
 		name string
 		ass  string
 		gif  string
+		mp4  string
 	}
 }
 
@@ -76,6 +77,7 @@ func (m *Meme) isExist() bool {
 	m.paths.output.name = "./dist/" + m.Name
 	m.paths.output.ass = "./dist/" + m.Name + "/" + m.hash + ".ass"
 	m.paths.output.gif = "./dist/" + m.Name + "/" + m.hash + ".gif"
+	m.paths.output.mp4 = "./dist/" + m.Name + "/" + m.hash + ".mp4"
 	if _, err := os.Stat(m.paths.output.name); os.IsNotExist(err) {
 		os.Mkdir(m.paths.output.name, os.ModePerm)
 	}
@@ -107,7 +109,21 @@ func (m *Meme) renderAss() error {
 	}
 }
 
-func (m *Meme) renderGif() error {
+func (m *Meme) renderMp4(c chan bool) error {
+	cmd := exec.Command("ffmpeg",
+		"-i", m.paths.template.mp4,
+		"-vf", "ass="+m.paths.output.ass,
+		"-an",
+		"-y", m.paths.output.mp4)
+
+	if _, err := cmd.CombinedOutput(); err != nil {
+		panic(err)
+	}
+	c <- true
+	return nil
+}
+
+func (m *Meme) renderGif(c chan bool) error {
 	cmd := exec.Command(
 		"ffmpeg",
 		"-i", m.paths.template.mp4,
@@ -119,6 +135,7 @@ func (m *Meme) renderGif() error {
 	if _, err := cmd.CombinedOutput(); err != nil {
 		panic(err)
 	}
+	c <- true
 	return nil
 }
 
@@ -129,8 +146,11 @@ func (m *Meme) New() error {
 	if m.isExist() {
 		return nil
 	} else {
+		c := make(chan bool, 2)
 		m.renderAss()
-		m.renderGif()
+		m.renderMp4(c)
+		m.renderGif(c)
+		<-c
 		return nil
 	}
 }
