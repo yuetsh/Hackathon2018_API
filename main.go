@@ -11,7 +11,7 @@ var h Handler
 
 func init() {
 	if _, err := os.Stat("./dist"); os.IsNotExist(err) {
-		os.Mkdir("./dist", 0700)
+		_ = os.Mkdir("./dist", 0700)
 	}
 	InitDB()
 	NewPalettes()

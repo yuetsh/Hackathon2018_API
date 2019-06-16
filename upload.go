@@ -95,7 +95,7 @@ func UploadGif(path string) (*UploadData, error) {
 		return nil, err
 	}
 	uploadRes := new(UploadRes2)
-	json.Unmarshal(data, uploadRes)
+	_ = json.Unmarshal(data, uploadRes)
 	if uploadRes.Code == "success" {
 		res := new(UploadData)
 		res.Height = uploadRes.Data.Height

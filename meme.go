@@ -80,7 +80,7 @@ func (m *Meme) isExist() bool {
 	m.paths.output.gif = "./dist/" + m.Name + "/" + m.hash + ".gif"
 	m.paths.output.mp4 = "./dist/" + m.Name + "/" + m.hash + ".mp4"
 	if _, err := os.Stat(m.paths.output.name); os.IsNotExist(err) {
-		os.Mkdir(m.paths.output.name, os.ModePerm)
+		_ = os.Mkdir(m.paths.output.name, os.ModePerm)
 	}
 	_, err := os.Stat(m.paths.output.ass)
 	return !os.IsNotExist(err)
@@ -110,8 +110,7 @@ func (m *Meme) renderAss() error {
 	}
 }
 
-func (m *Meme) renderMp4(wg *sync.WaitGroup) error {
-	defer wg.Done()
+func (m *Meme) renderMp4() error {
 	cmd := exec.Command("ffmpeg",
 		"-i", m.paths.template.mp4,
 		"-vf", "ass="+m.paths.output.ass,
@@ -124,8 +123,7 @@ func (m *Meme) renderMp4(wg *sync.WaitGroup) error {
 	return nil
 }
 
-func (m *Meme) renderGif(wg *sync.WaitGroup) error {
-	defer wg.Done()
+func (m *Meme) renderGif() error {
 	cmd := exec.Command(
 		"ffmpeg",
 		"-i", m.paths.template.mp4,
@@ -149,9 +147,15 @@ func (m *Meme) New() error {
 	} else {
 		var wg sync.WaitGroup
 		wg.Add(2)
-		m.renderAss()
-		go m.renderMp4(&wg)
-		go m.renderGif(&wg)
+		_ = m.renderAss()
+		go func() {
+			_ = m.renderMp4()
+			wg.Done()
+		}()
+		go func() {
+			_ = m.renderGif()
+			wg.Done()
+		}()
 		wg.Wait()
 		return nil
 	}
